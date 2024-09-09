@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login</title>
     <link rel="stylesheet" href="/static/styles/styles.css">
-    <link rel="stylesheet" href="/static/styles/authorization.css">
+    <link rel="stylesheet" href="/static/styles/register.css">
 </head>
 <body>
     <div class="container">
@@ -17,16 +17,16 @@
             </div>
         </div>
         <div class="main-container">
-            <div class="login-container">
-                <div class="login-form-container">
-                    <form method="post" class="login-form">
-                        <input class="login__controls login-input__item" type="email" name="email" id="email" placeholder="Enter a email">
-                        <input class="login__controls login-input__item" type="password" name="password" id="password" placeholder="Enter a password">
-                        <input class="login__controls" type="submit" id="submit" value="Sign in">
-                        <span class="register__item">Not have account ?<a href="${pageContext.request.contextPath}/register">Create account</a></span>
+            <div class="register-container">
+                <div class="register-form-container">
+                    <form method="post" class="register-form">
+                        <input class="register__controls register-input__item" type="text" name="fullName" id="fullName" placeholder="Enter your name">
+                        <input class="register__controls register-input__item" type="email" name="email" id="email" placeholder="Enter a email">
+                        <input class="register__controls register-input__item" type="password" name="password" id="password" placeholder="Enter a password">
+                        <input class="register__controls" type="submit" id="submit" value="Sign up">
+
                     </form>
                 </div>
-
             </div>
         </div>
         <div class="footer-container"></div>
