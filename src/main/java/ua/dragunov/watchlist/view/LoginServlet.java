@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import ua.dragunov.watchlist.config.security.PasswordEncryptor;
 import ua.dragunov.watchlist.exceptions.AuthenticationException;
+import ua.dragunov.watchlist.exceptions.DatabaseConnetionException;
 import ua.dragunov.watchlist.model.User;
 import ua.dragunov.watchlist.persistence.DataSourceProvider;
 import ua.dragunov.watchlist.persistence.JdbcUserRepository;
@@ -27,7 +28,7 @@ public class LoginServlet extends HttpServlet {
         super.init(config);
         try {
             userService = new UserServiceImpl(new PasswordEncryptor(), new JdbcUserRepository(DataSourceProvider.getDataSource()));
-        } catch (NamingException e) {
+        } catch (DatabaseConnetionException e) {
             throw new RuntimeException(e);
         }
     }

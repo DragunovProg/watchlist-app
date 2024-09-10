@@ -1,5 +1,7 @@
 package ua.dragunov.watchlist.persistence;
 
+import ua.dragunov.watchlist.exceptions.DatabaseConnetionException;
+import ua.dragunov.watchlist.exceptions.EntityNotFoundException;
 import ua.dragunov.watchlist.model.Role;
 import ua.dragunov.watchlist.model.User;
 import ua.dragunov.watchlist.persistence.repository.UserRepository;
@@ -28,13 +30,19 @@ public class JdbcUserRepository implements UserRepository {
             user = new User();
             PreparedStatement preparedStatement = connection.prepareStatement("select * from users where id = ?");
             preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            user = mapResultSetToUser(preparedStatement.executeQuery());
+            if (!resultSet.next()) {
+                throw new EntityNotFoundException("user " + id + " not found");
+            }
+
+            user = mapResultSetToUser(resultSet);
 
 
         } catch (SQLException e) {
             logger.warning("JdbcUserRepository sql error : " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new DatabaseConnetionException("Database error occurred "
+                    + "\nsql state: " + e.getSQLState(), e);
         }
 
         return user;
@@ -48,13 +56,19 @@ public class JdbcUserRepository implements UserRepository {
             user = new User();
             PreparedStatement preparedStatement = connection.prepareStatement("select * from users where email = ?");
             preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            user = mapResultSetToUser(preparedStatement.executeQuery());
+            if (!resultSet.next()) {
+                throw new EntityNotFoundException("user with email " + email + " not found");
+            }
+
+            user = mapResultSetToUser(resultSet);
 
 
         } catch (SQLException e) {
             logger.warning("JdbcUserRepository sql error : " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new DatabaseConnetionException("Database error occurred "
+                    + "\nsql state: " + e.getSQLState(), e);
         }
 
         return user;
@@ -82,7 +96,8 @@ public class JdbcUserRepository implements UserRepository {
 
         } catch (SQLException e) {
             logger.warning("JdbcUserRepository sql error : " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new DatabaseConnetionException("Database error occurred while fetching data item with id " + user.getId()
+                    + "\nsql state: " + e.getSQLState(), e);
         }
     }
 
@@ -105,7 +120,8 @@ public class JdbcUserRepository implements UserRepository {
 
         } catch (SQLException e) {
             logger.warning("JdbcUserRepository sql error : " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new DatabaseConnetionException("Database error occurred while fetching data item with email " + user.getEmail()
+                    + "\nsql state: " + e.getSQLState(), e);
         }
     }
 
@@ -124,13 +140,16 @@ public class JdbcUserRepository implements UserRepository {
 
         } catch (SQLException e) {
             logger.warning("JdbcUserRepository sql error : " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new DatabaseConnetionException("Database error occurred "
+                    + "\nsql state: " + e.getSQLState(), e);
+        }
+        catch (DatabaseConnetionException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     private User mapResultSetToUser(ResultSet resultSet) throws SQLException {
         User user = new User();
-        resultSet.next();
 
         user.setId(resultSet.getLong("id"));
         user.setFirstName(resultSet.getString("first_name"));

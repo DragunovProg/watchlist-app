@@ -1,5 +1,7 @@
 package ua.dragunov.watchlist.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class WatchlistItem {
@@ -116,4 +118,7 @@ public class WatchlistItem {
                 ", user=" + user +
                 '}';
     }
+
+
+
 }

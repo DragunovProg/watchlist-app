@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ua.dragunov.watchlist.config.security.PasswordEncryptor;
+import ua.dragunov.watchlist.exceptions.DatabaseConnetionException;
 import ua.dragunov.watchlist.persistence.DataSourceProvider;
 import ua.dragunov.watchlist.persistence.JdbcUserRepository;
 import ua.dragunov.watchlist.persistence.JdbcWatchlistItemRepository;
@@ -15,11 +16,10 @@ import ua.dragunov.watchlist.service.UserServiceImpl;
 import ua.dragunov.watchlist.service.WatchlistItemService;
 import ua.dragunov.watchlist.service.WatchlistItemServiceIml;
 
-import javax.naming.NamingException;
 import java.io.IOException;
 
 
-@WebServlet("/")
+@WebServlet(urlPatterns = {"/"})
 public class HomeServlet extends HttpServlet {
     private WatchlistItemService watchlistItemService;
     private UserService userService;
@@ -37,7 +37,7 @@ public class HomeServlet extends HttpServlet {
 
             userService = new UserServiceImpl(new PasswordEncryptor()
                     , new JdbcUserRepository(DataSourceProvider.getDataSource()));
-        } catch (NamingException e) {
+        } catch (DatabaseConnetionException e) {
             throw new RuntimeException(e);
         }
     }
@@ -45,7 +45,7 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("watchlistItems", watchlistItemService.findAll());
-
+        System.out.println("HomeServlet called: " + req.getRequestURI());
         if (req.getRequestURI().equals("/")) {
             req.getRequestDispatcher("/home.jsp").forward(req, resp);
         }

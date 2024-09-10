@@ -1,5 +1,7 @@
 package ua.dragunov.watchlist.persistence;
 
+import ua.dragunov.watchlist.exceptions.DatabaseConnetionException;
+import ua.dragunov.watchlist.exceptions.EntityNotFoundException;
 import ua.dragunov.watchlist.model.Status;
 import ua.dragunov.watchlist.model.User;
 import ua.dragunov.watchlist.model.WatchlistItem;
@@ -38,17 +40,21 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next()) {
-                watchlistItem.setId(resultSet.getLong("id"));
-                watchlistItem.setTitle(resultSet.getString("title"));
-                watchlistItem.setDescription(resultSet.getString("description"));
-                watchlistItem.setStatus(Status.valueOf(resultSet.getString("status")));
-                watchlistItem.setPicture(resultSet.getString("picture"));
-                watchlistItem.setGenre(resultSet.getString("genre"));
-                watchlistItem.setType(resultSet.getString("type"));
-                watchlistItem.setReleaseYear(resultSet.getInt("release_year"));
-                watchlistItem.setUser(userRepository.findById(resultSet.getLong("user_id")));
+            if (!resultSet.next()) {
+                throw new EntityNotFoundException("watchlist item with id " + id + " not found");
             }
+
+
+            watchlistItem.setId(resultSet.getLong("id"));
+            watchlistItem.setTitle(resultSet.getString("title"));
+            watchlistItem.setDescription(resultSet.getString("description"));
+            watchlistItem.setStatus(Status.valueOf(resultSet.getString("status")));
+            watchlistItem.setPicture(resultSet.getString("picture"));
+            watchlistItem.setGenre(resultSet.getString("genre"));
+            watchlistItem.setType(resultSet.getString("type"));
+            watchlistItem.setReleaseYear(resultSet.getInt("release_year"));
+            watchlistItem.setUser(userRepository.findById(resultSet.getLong("user_id")));
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -70,7 +76,6 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
             while (resultSet.next()) {
                 WatchlistItem item = new WatchlistItem();
 
-                // Заполнение полей WatchlistItem
                 item.setId(resultSet.getLong("id"));
                 item.setTitle(resultSet.getString("title"));
                 item.setPicture(resultSet.getString("picture"));
@@ -90,7 +95,9 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+
+            throw new DatabaseConnetionException("Database error occurred "
+                    + "\nsql state: " + e.getSQLState(), e);
         }
 
         return watchlistItems;
@@ -117,7 +124,8 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseConnetionException("Database error occurred while fetching data with name " + watchlistItem.getTitle()
+                    + "\nsql state: " + e.getSQLState(), e);
         }
     }
 
@@ -144,7 +152,8 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseConnetionException("Database error occurred while fetching data with name " + watchlistItem.getTitle()
+                    + "\nsql state: " + e.getSQLState(), e);
         }
     }
 
@@ -163,7 +172,8 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
 
         } catch (SQLException e) {
 
-            throw new RuntimeException(e);
+            throw new DatabaseConnetionException("Database error occurred "
+                    + "\nsql state: " + e.getSQLState(), e);
         }
     }
 }

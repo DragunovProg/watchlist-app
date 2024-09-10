@@ -11,8 +11,9 @@ To change this template use File | Settings | File Templates.
 <html>
 <head>
   <title>Watchlist</title>
-  <link rel="stylesheet" href="/static/styles/styles.css">
-  <link rel="stylesheet" href="/static/styles/home.css">
+  <link rel="stylesheet" href="static/styles/styles.css">
+  <link rel="stylesheet" href="static/styles/home.css">
+  <script src="static/scripts/account-submenu-widget.js" defer></script>
 </head>
 <body>
 <div class="container">
@@ -22,7 +23,13 @@ To change this template use File | Settings | File Templates.
     </div>
     <div class="account-preview-container">
       <span class="account-name__item">${sessionScope.user.firstName} ${sessionScope.user.lastName}</span>
+      <div class="account-menu-container account-menu-hidden">
+        <span class="account-logout__item" style="display: block;">
+          <a href="/logout">Logout</a>
+        </span>
+      </div>
     </div>
+
   </div>
   <div class="main-container">
     <div class="watchlist-container">
