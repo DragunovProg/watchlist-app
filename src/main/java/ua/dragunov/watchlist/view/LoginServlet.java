@@ -42,25 +42,18 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User user = userService.findByEmail(req.getParameter("email"));
-
         try {
-            if (user == null) {
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-
-                throw new AuthenticationException("user not found");
-            }
-            if (!user.getPassword().equals(req.getParameter("password"))) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-                throw new AuthenticationException("wrong password");
-            }
+            User user = userService.login(req.getParameter("email"), req.getParameter("password"));
 
             HttpSession session = req.getSession();
             session.setAttribute("user", user);
+
+            resp.sendRedirect("/");
         } catch (AuthenticationException e) {
-            System.out.println(e.getMessage());
+            req.setAttribute("error", e.getMessage());
+            req.getRequestDispatcher("login.jsp").forward(req, resp);
         }
 
-        resp.sendRedirect("/");
+
     }
 }

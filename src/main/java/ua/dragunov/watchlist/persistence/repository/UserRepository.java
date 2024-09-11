@@ -8,4 +8,5 @@ public interface UserRepository {
     public void update(User user);
     public void save(User user);
     public void deleteById(long id);
+
 }

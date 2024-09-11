@@ -1,6 +1,6 @@
 package ua.dragunov.watchlist.exceptions;
 
-public class AuthenticationException  extends  Exception {
+public class AuthenticationException  extends  RuntimeException {
 
     public AuthenticationException() {
         super();

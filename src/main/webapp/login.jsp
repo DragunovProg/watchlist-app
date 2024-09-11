@@ -22,6 +22,7 @@
                     <form method="post" class="login-form">
                         <input class="login__controls login-input__item" type="email" name="email" id="email" placeholder="Enter a email">
                         <input class="login__controls login-input__item" type="password" name="password" id="password" placeholder="Enter a password">
+                        <span class =login-error__item>${error}</span>
                         <input class="login__controls" type="submit" id="submit" value="Sign in">
                         <span class="register__item">Not have account ?<a href="${pageContext.request.contextPath}/register">Create account</a></span>
                     </form>

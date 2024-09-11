@@ -22,6 +22,7 @@ public class JdbcUserRepository implements UserRepository {
         this.dataSource = dataSource;
     }
 
+
     @Override
     public User findById(long id) {
         User user = null;

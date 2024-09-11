@@ -11,4 +11,5 @@ public interface UserService {
 
     public void update(User user);
     public void save(User user);
+    public User login(String email, String password);
 }

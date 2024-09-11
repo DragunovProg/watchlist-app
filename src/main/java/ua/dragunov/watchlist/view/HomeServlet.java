@@ -45,7 +45,7 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("watchlistItems", watchlistItemService.findAll());
-        System.out.println("HomeServlet called: " + req.getRequestURI());
+
         if (req.getRequestURI().equals("/")) {
             req.getRequestDispatcher("/home.jsp").forward(req, resp);
         }
