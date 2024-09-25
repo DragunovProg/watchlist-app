@@ -13,7 +13,10 @@ To change this template use File | Settings | File Templates.
   <title>Watchlist</title>
   <link rel="stylesheet" href="static/styles/styles.css">
   <link rel="stylesheet" href="static/styles/home.css">
-  <script src="static/scripts/account-submenu-widget.js" defer></script>
+  <script src="static/scripts/home.js" defer></script>
+  <script src="static/scripts/submenu-widget.js" defer></script>
+  <script src="static/scripts/filter-handling.js" defer></script>
+  <script src="static/scripts/status-update-widget.js" defer></script>
 </head>
 <body>
 <div class="container">
@@ -42,7 +45,7 @@ To change this template use File | Settings | File Templates.
         </div>
         <div class="search-filter-container">
           <span class="filter-title">Title:</span>
-          <input class="search-filter__control title-search__item" type="search">
+          <input class="search-filter__control" type="search">
         </div>
         <div class="search-filter-container">
           <span class="filter-title">Type:</span>
@@ -51,18 +54,28 @@ To change this template use File | Settings | File Templates.
         <div class="search-filter-container">
           <span class="filter-title">Status:</span>
           <select class="search-filter__control status-select__item" name="status-select" id="">
+            <option value=""></option>
             <option value="watched">Watched</option>
             <option value="watching">Watching</option>
-            <option value="plan-to-watch">Plan to watch</option>
+            <option value="plan to watch">Plan to watch</option>
           </select>
         </div>
         <div class="search-filter-container">
           <span class="filter-title">Genres:</span>
-          <input type="text" class="search-filter__control type-search__item">
+          <input type="text" class="search-filter__control genre-search__item">
+        </div>
+        <div class="search-filter-container search-filter-submit">
+          <button class="submit-filter_btn">Search</button>
         </div>
       </div>
     </div>
     <div class="watchlist-container">
+      <div class="watchlist-container-header">
+        <div class="watchlist-add-btn_item">
+          <button class="add-btn">New</button>
+        </div>
+        <span class="watchlist-title__item">My Watchlist ${requestScope.picture}</span>
+      </div>
       <c:forEach var="item" items="${watchlistItems}">
         <div class="watchlist__item">
           <div class="watchlist-image__item">
@@ -73,19 +86,96 @@ To change this template use File | Settings | File Templates.
               <span class="watchlist-container-title">${item.title}</span>
               <div class="watchlist-container-status">
                 <span class="status__item" style="background: ${item.status.backgroundColor}">${item.status.statusName}</span>
+                <div class="select-status-container select-status__hidden">
+                  <div class="select-status__item" data-id="${item.id}" data-status-name="WATCHED" data-color="#33cc33">Watched</div>
+                  <div class="select-status__item" data-id="${item.id}" data-status-name="PLAN_TO_WATCH">Plan to watch</div>
+                </div>
               </div>
             </div>
             <div class="watchlist-preview-content__item">
-              <span class="watchlist-container-type">type: ${item.type}</span>
-              <span class="watchlist-container-genre">genres: ${item.genre}</span>
-              <span class="watchlist-container-released-year">Released year: ${item.releaseYear}</span>
+              <span class="watchlist-container-type">type: <span class="type__item">${item.type}</span></span>
+              <span class="watchlist-container-genre">genres: <span class="genre__item">${item.genre}</span></span>
+              <span class="watchlist-container-released-year">Released year: <span class="released-year__item">${item.releaseYear}</span></span>
             </div>
+          </div>
+          <div class="watchlist-edit__item">
+            <span class="edit-btn__item" data-id="${item.id}">Edit</span>
           </div>
         </div>
       </c:forEach>
     </div>
   </div>
   <div class="footer-container"></div>
+  <div class="watchlist-add-container watchlist-create-form__hidden">
+    <div class="create-form-wrapper">
+      <form method="post" class="watchlist-create-form" enctype="multipart/form-data">
+        <div class="form-group file-upload">
+          <label for="file" class="file-label">
+            <input type="file" name="file" id="file" class="file-input">
+          </label>
+        </div>
+        <div class="form-group">
+          <input type="text" name="title" id="title" placeholder="Title" class="form-input">
+        </div>
+        <div class="form-group">
+          <input type="text" name="type" id="type" placeholder="Entertainment type (anime, film, etc.)" class="form-input">
+        </div>
+        <div class="form-group">
+          <input type="text" name="genres" id="genres" placeholder="Genres" class="form-input">
+        </div>
+        <div class="form-group">
+          <input type="text" name="released-year" id="released_year" placeholder="Released year" class="form-input">
+        </div>
+        <div class="form-group">
+          <select name="status" id="status" class="form-input">
+            <option value="WATCHED">Watched</option>
+            <option value="WATCHING">Watching</option>
+            <option value="PLAN_TO_WATCH">Plan to watch</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="text" name="description" id="description" placeholder="Description" class="form-input">
+        </div>
+        <div class="form-navigation">
+          <button type="submit" class="submit-button">Submit</button>
+          <button type="reset" class="close-button">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="watchlist-edit-container watchlist-edit__hidden">
+    <div class="edit-form-wrapper">
+      <form method="post" action="${pageContext.request.contextPath}/watchlist-edit" class="watchlist-edit-form" enctype="multipart/form-data">
+        <div class="form-group file-upload">
+          <label for="file" class="file-label">
+            <input type="file" name="file"  class="file-input">
+          </label>
+        </div>
+        <div class="form-group">
+          <input type="text" name="watchlist-title" placeholder="Title" class="form-input">
+        </div>
+        <div class="form-group">
+          <input type="text" name="watchlist-type"  placeholder="Entertainment type (anime, film, etc.)" class="form-input">
+        </div>
+        <div class="form-group">
+          <input type="text" name="watchlist-genres" placeholder="Genres" class="form-input">
+        </div>
+        <div class="form-group">
+          <input type="text" name="watchlist-released-year" placeholder="Released year" class="form-input">
+        </div>
+        <div class="form-group">
+          <input type="text" name="watchlist-description" placeholder="Description" class="form-input">
+        </div>
+        <div>
+          <input type="hidden" name="watchlist-id" value="">
+        </div>
+        <div class="form-navigation">
+          <button type="submit" class="submit-button">Submit</button>
+          <button type="reset" class="close-button">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 </body>
 </html>

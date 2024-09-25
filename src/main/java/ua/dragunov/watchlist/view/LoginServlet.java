@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.dragunov.watchlist.config.security.PasswordEncryptor;
 import ua.dragunov.watchlist.exceptions.AuthenticationException;
 import ua.dragunov.watchlist.exceptions.DatabaseConnetionException;
@@ -21,6 +23,7 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = "/login")
 public class LoginServlet extends HttpServlet {
+    private static final Logger LOGGER = LogManager.getLogger(LoginServlet.class);
     private UserService userService;
 
     @Override
@@ -29,7 +32,7 @@ public class LoginServlet extends HttpServlet {
         try {
             userService = new UserServiceImpl(new PasswordEncryptor(), new JdbcUserRepository(DataSourceProvider.getDataSource()));
         } catch (DatabaseConnetionException e) {
-            throw new RuntimeException(e);
+            LOGGER.error("error with database connection", e);
         }
     }
 
@@ -50,6 +53,7 @@ public class LoginServlet extends HttpServlet {
 
             resp.sendRedirect("/");
         } catch (AuthenticationException e) {
+            LOGGER.error("Invalid user data: {}", e.getMessage(), e);
             req.setAttribute("error", e.getMessage());
             req.getRequestDispatcher("login.jsp").forward(req, resp);
         }

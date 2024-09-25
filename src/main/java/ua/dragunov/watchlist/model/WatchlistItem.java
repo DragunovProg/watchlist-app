@@ -119,6 +119,13 @@ public class WatchlistItem {
                 '}';
     }
 
-
+    public boolean dataNullValidation() {
+        return this.title != null &&
+               this.picture != null &&
+               this.genre != null &&
+               this.description != null &&
+               this.status != null &&
+               this.releaseYear != 0;
+    }
 
 }

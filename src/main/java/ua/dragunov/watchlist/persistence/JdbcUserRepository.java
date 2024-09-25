@@ -1,5 +1,7 @@
 package ua.dragunov.watchlist.persistence;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.dragunov.watchlist.exceptions.DatabaseConnetionException;
 import ua.dragunov.watchlist.exceptions.EntityNotFoundException;
 import ua.dragunov.watchlist.model.Role;
@@ -11,11 +13,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.logging.Logger;
 
 public class JdbcUserRepository implements UserRepository {
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private static final Logger logger = LogManager.getLogger(JdbcUserRepository.class);
     private final DataSource dataSource;
 
     public JdbcUserRepository(DataSource dataSource) {
@@ -25,9 +25,12 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User findById(long id) {
+        logger.info("findById started");
         User user = null;
 
         try(Connection connection = dataSource.getConnection()) {
+            logger.info("findById connected to the database");
+
             user = new User();
             PreparedStatement preparedStatement = connection.prepareStatement("select * from users where id = ?");
             preparedStatement.setLong(1, id);
@@ -36,12 +39,14 @@ public class JdbcUserRepository implements UserRepository {
             if (!resultSet.next()) {
                 throw new EntityNotFoundException("user " + id + " not found");
             }
+            logger.info("findById executed successfully");
 
             user = mapResultSetToUser(resultSet);
+            logger.info("(findById) user: {} founded and passed", user);
 
 
         } catch (SQLException e) {
-            logger.warning("JdbcUserRepository sql error : " + e.getMessage());
+            logger.error("JdbcUserRepository sql error : {} with user(id: {})", e.getMessage(), id);
             throw new DatabaseConnetionException("Database error occurred "
                     + "\nsql state: " + e.getSQLState(), e);
         }
@@ -51,9 +56,12 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User findByEmail(String email) {
+        logger.info("findByEmail started");
         User user = null;
 
         try(Connection connection = dataSource.getConnection()) {
+            logger.info("findByEmail connected to the database");
+
             user = new User();
             PreparedStatement preparedStatement = connection.prepareStatement("select * from users where email = ?");
             preparedStatement.setString(1, email);
@@ -62,12 +70,13 @@ public class JdbcUserRepository implements UserRepository {
             if (!resultSet.next()) {
                 throw new EntityNotFoundException("user with email " + email + " not found");
             }
+            logger.info("findByEmail executed successfully\n email: {}", email);
 
             user = mapResultSetToUser(resultSet);
-
+            logger.info("user: {} founded and passed", user);
 
         } catch (SQLException e) {
-            logger.warning("JdbcUserRepository sql error : " + e.getMessage());
+            logger.error("JdbcUserRepository sql error : {} with user({})", e.getMessage(), email);
             throw new DatabaseConnetionException("Database error occurred "
                     + "\nsql state: " + e.getSQLState(), e);
         }
@@ -94,9 +103,9 @@ public class JdbcUserRepository implements UserRepository {
 
             preparedStatement.executeUpdate();
 
-
+            logger.info("user {} updated successfully", user);
         } catch (SQLException e) {
-            logger.warning("JdbcUserRepository sql error : " + e.getMessage());
+            logger.error("JdbcUserRepository sql error : {} with user: {}",e.getMessage(), user);
             throw new DatabaseConnetionException("Database error occurred while fetching data item with id " + user.getId()
                     + "\nsql state: " + e.getSQLState(), e);
         }
@@ -119,8 +128,9 @@ public class JdbcUserRepository implements UserRepository {
 
             preparedStatement.executeUpdate();
 
+            logger.info("user {} saved successfully", user);
         } catch (SQLException e) {
-            logger.warning("JdbcUserRepository sql error : " + e.getMessage());
+            logger.error("JdbcUserRepository sql error : {} with user: {}",e.getMessage(), user);
             throw new DatabaseConnetionException("Database error occurred while fetching data item with email " + user.getEmail()
                     + "\nsql state: " + e.getSQLState(), e);
         }
@@ -138,14 +148,15 @@ public class JdbcUserRepository implements UserRepository {
 
             preparedStatement.executeUpdate();
 
+            logger.info("user with id {} deleted successfully", id);
 
         } catch (SQLException e) {
-            logger.warning("JdbcUserRepository sql error : " + e.getMessage());
+            logger.error("JdbcUserRepository sql error : with user(id: {})", e.getMessage(), id);
             throw new DatabaseConnetionException("Database error occurred "
                     + "\nsql state: " + e.getSQLState(), e);
         }
         catch (DatabaseConnetionException e) {
-            System.out.println(e.getMessage());
+            logger.error("DatabaseConnection error: {}", e.getMessage());
         }
     }
 
@@ -165,4 +176,6 @@ public class JdbcUserRepository implements UserRepository {
     private Role defaultRoleUserInsertion(Role role) {
         return role == null ? Role.USER : role;
     }
+
+
 }
