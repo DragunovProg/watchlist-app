@@ -79,7 +79,7 @@ public class HomeServlet extends HttpServlet {
 
 
 
-            if (!picture.getContentType().startsWith("image")) {
+            if (picture.getSize() > 0 && !picture.getContentType().startsWith("image")) {
                 throw new InvalidInputDataException("file must be an image");
             }
 

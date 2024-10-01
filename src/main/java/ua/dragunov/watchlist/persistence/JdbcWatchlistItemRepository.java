@@ -38,7 +38,6 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
                         SELECT * FROM watchlist_items
                         WHERE id = ?;
                     """);
-            LOGGER.info("connection is success");
 
             preparedStatement.setLong(1, id);
 
@@ -59,7 +58,7 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
             watchlistItem.setReleaseYear(resultSet.getInt("release_year"));
             watchlistItem.setUser(userRepository.findById(resultSet.getLong("user_id")));
 
-            LOGGER.info("watchlist item received: {}", watchlistItem);
+            LOGGER.info("watchlist item received and passed to servlet: {}", watchlistItem);
 
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
@@ -102,6 +101,9 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
                 watchlistItems.add(item);
             }
 
+            LOGGER.info("watchlist item list received and passed to servlet");
+
+
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
             throw new DatabaseConnetionException("Database error occurred "
@@ -143,6 +145,9 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
                 watchlistItems.add(item);
             }
 
+            LOGGER.info("watchlist item list  by user id: {} received and passed to servlet", userId);
+
+
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
             throw new DatabaseConnetionException("Database error occurred "
@@ -171,6 +176,9 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
             preparedStatement.setLong(8, watchlistItem.getUser().getId());
 
             preparedStatement.executeUpdate();
+
+            LOGGER.info("watchlist item successfully saved {}", watchlistItem);
+
 
         } catch (SQLException e) {
             LOGGER.error("Error in update method with watchlist: {}", watchlistItem, e);
@@ -202,6 +210,8 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
             Status.valueOf(watchlistItem.getStatus().toString());
             preparedStatement.executeUpdate();
 
+
+            LOGGER.info("watchlist item successfully updated {}", watchlistItem);
         } catch (SQLException e) {
             LOGGER.error("Error in update method with watchlist: {}", watchlistItem, e);
             throw new DatabaseConnetionException("Database error occurred while fetching data with name " + watchlistItem.getTitle()
@@ -221,7 +231,7 @@ public class JdbcWatchlistItemRepository implements WatchlistItemRepository {
 
             preparedStatement.executeUpdate();
 
-
+            LOGGER.info("watchlist item with id {} successfully deleted", id);
         } catch (SQLException e) {
             LOGGER.error("Error in deleteById method with watchlist id: {}", id, e);
             throw new DatabaseConnetionException("Database error occurred "

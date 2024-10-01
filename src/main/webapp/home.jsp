@@ -45,15 +45,15 @@ To change this template use File | Settings | File Templates.
         </div>
         <div class="search-filter-container">
           <span class="filter-title">Title:</span>
-          <input class="search-filter__control" type="search">
+          <input class="search-filter__control" type="search" data-filtering-field="watchlist-container-title">
         </div>
         <div class="search-filter-container">
           <span class="filter-title">Type:</span>
-          <input type="text" class="search-filter__control type-search__item">
+          <input type="text" class="search-filter__control type-search__item" data-filtering-field="type__item">
         </div>
         <div class="search-filter-container">
           <span class="filter-title">Status:</span>
-          <select class="search-filter__control status-select__item" name="status-select" id="">
+          <select class="search-filter__control status-select__item" name="status-select" id="" data-filtering-field="status__item">
             <option value=""></option>
             <option value="watched">Watched</option>
             <option value="watching">Watching</option>
@@ -62,10 +62,11 @@ To change this template use File | Settings | File Templates.
         </div>
         <div class="search-filter-container">
           <span class="filter-title">Genres:</span>
-          <input type="text" class="search-filter__control genre-search__item">
+          <input type="text" class="search-filter__control genre-search__item" data-filtering-field="genre__item">
         </div>
         <div class="search-filter-container search-filter-submit">
           <button class="submit-filter_btn">Search</button>
+          <button class="clear-filter-btn">Clear</button>
         </div>
       </div>
     </div>
@@ -145,7 +146,7 @@ To change this template use File | Settings | File Templates.
   </div>
   <div class="watchlist-edit-container watchlist-edit__hidden">
     <div class="edit-form-wrapper">
-      <form method="post" action="${pageContext.request.contextPath}/watchlist-edit" class="watchlist-edit-form" enctype="multipart/form-data">
+      <form method="post" class="watchlist-edit-form" enctype="multipart/form-data">
         <div class="form-group file-upload">
           <label for="file" class="file-label">
             <input type="file" name="file"  class="file-input">
@@ -162,9 +163,6 @@ To change this template use File | Settings | File Templates.
         </div>
         <div class="form-group">
           <input type="text" name="watchlist-released-year" placeholder="Released year" class="form-input">
-        </div>
-        <div class="form-group">
-          <input type="text" name="watchlist-description" placeholder="Description" class="form-input">
         </div>
         <div>
           <input type="hidden" name="watchlist-id" value="">

@@ -24,7 +24,7 @@
                         <input class="register__controls register-input__item" type="email" name="email" id="email" placeholder="Enter a email">
                         <input class="register__controls register-input__item" type="password" name="password" id="password" placeholder="Enter a password">
                         <input class="register__controls" type="submit" id="submit" value="Sign up">
-
+                        <span class="login__item">Already have account ?<a href="${pageContext.request.contextPath}/login">Sign in</a></span>
                     </form>
                 </div>
             </div>

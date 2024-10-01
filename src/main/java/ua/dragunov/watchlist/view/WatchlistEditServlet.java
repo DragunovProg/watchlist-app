@@ -21,7 +21,6 @@ import ua.dragunov.watchlist.service.WatchlistItemService;
 import ua.dragunov.watchlist.service.WatchlistItemServiceIml;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Properties;
 
 @MultipartConfig
@@ -44,7 +43,6 @@ public class WatchlistEditServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long id = Long.parseLong(req.getParameter("watchlist-id"));
-        PrintWriter writer = resp.getWriter();
 
         try {
             Properties properties = PropertyConfigProvider.getPropertyConfig();
@@ -66,7 +64,6 @@ public class WatchlistEditServlet extends HttpServlet {
 
 
             watchlistItem.setTitle(req.getParameter("watchlist-title"));
-            watchlistItem.setDescription(req.getParameter("watchlist-description"));
             watchlistItem.setGenre(req.getParameter("watchlist-genres"));
             watchlistItem.setType(req.getParameter("watchlist-type"));
             watchlistItem.setPicture(path);
@@ -74,22 +71,14 @@ public class WatchlistEditServlet extends HttpServlet {
 
             watchlistItemService.update(watchlistItem);
 
-            resp.setContentType("application/json");
-            writer.write("""
-                    {
-                        "message": "success"
-                    }
-                    """);
+            resp.sendRedirect("/?message=success");
 
         } catch (InvalidInputDataException | DatabaseConnetionException e) {
             LOGGER.error("error with database connection", e);
-            writer.write("""
-                    {
-                        "message": "error"
-                    }
-                    """);
+            resp.sendRedirect("/?message=Error");
 
-    }
+
+        }
 
     }
 }

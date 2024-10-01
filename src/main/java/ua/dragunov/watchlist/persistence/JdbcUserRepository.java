@@ -25,11 +25,9 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User findById(long id) {
-        logger.info("findById started");
         User user = null;
 
         try(Connection connection = dataSource.getConnection()) {
-            logger.info("findById connected to the database");
 
             user = new User();
             PreparedStatement preparedStatement = connection.prepareStatement("select * from users where id = ?");
@@ -39,10 +37,9 @@ public class JdbcUserRepository implements UserRepository {
             if (!resultSet.next()) {
                 throw new EntityNotFoundException("user " + id + " not found");
             }
-            logger.info("findById executed successfully");
 
             user = mapResultSetToUser(resultSet);
-            logger.info("(findById) user: {} founded and passed", user);
+            logger.info("(findById) user: {} founded and passed to Servlet", user);
 
 
         } catch (SQLException e) {
@@ -56,11 +53,9 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User findByEmail(String email) {
-        logger.info("findByEmail started");
         User user = null;
 
         try(Connection connection = dataSource.getConnection()) {
-            logger.info("findByEmail connected to the database");
 
             user = new User();
             PreparedStatement preparedStatement = connection.prepareStatement("select * from users where email = ?");
@@ -70,10 +65,9 @@ public class JdbcUserRepository implements UserRepository {
             if (!resultSet.next()) {
                 throw new EntityNotFoundException("user with email " + email + " not found");
             }
-            logger.info("findByEmail executed successfully\n email: {}", email);
 
             user = mapResultSetToUser(resultSet);
-            logger.info("user: {} founded and passed", user);
+            logger.info("user: {} founded and passed to servlet", user);
 
         } catch (SQLException e) {
             logger.error("JdbcUserRepository sql error : {} with user({})", e.getMessage(), email);
