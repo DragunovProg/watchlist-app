@@ -1,5 +1,7 @@
 package ua.dragunov.watchlist.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class WatchlistItem {
@@ -116,4 +118,14 @@ public class WatchlistItem {
                 ", user=" + user +
                 '}';
     }
+
+    public boolean dataNullValidation() {
+        return this.title != null &&
+               this.picture != null &&
+               this.genre != null &&
+               this.description != null &&
+               this.status != null &&
+               this.releaseYear != 0;
+    }
+
 }

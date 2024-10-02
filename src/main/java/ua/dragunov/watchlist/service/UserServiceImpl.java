@@ -2,6 +2,8 @@ package ua.dragunov.watchlist.service;
 
 import ua.dragunov.watchlist.config.security.EncryptorProvider;
 import ua.dragunov.watchlist.config.security.PasswordEncryptor;
+import ua.dragunov.watchlist.exceptions.AuthenticationException;
+import ua.dragunov.watchlist.exceptions.EntityNotFoundException;
 import ua.dragunov.watchlist.model.User;
 import ua.dragunov.watchlist.persistence.DataSourceProvider;
 import ua.dragunov.watchlist.persistence.JdbcUserRepository;
@@ -54,5 +56,21 @@ public class UserServiceImpl implements UserService {
     public void save(User user) {
         user.setPassword(encryptorProvider.encode(user.getPassword()));
         userRepository.save(user);
+    }
+
+    @Override
+    public User login(String email, String password) {
+        try {
+            User user = userRepository.findByEmail(email);
+            user.setPassword(encryptorProvider.decode(user.getPassword()));
+
+            if (!user.getPassword().equals(password)) {
+                throw new AuthenticationException("Incorrect password");
+            }
+
+            return user;
+        } catch (EntityNotFoundException e) {
+            throw new AuthenticationException("Invalid email", e);
+        }
     }
 }

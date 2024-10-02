@@ -10,18 +10,27 @@
     <link rel="stylesheet" href="/static/styles/authorization.css">
 </head>
 <body>
-    <div class="main-container">
-        <div class="login-container">
-            <div class="login-form-container">
-                <form method="post" class="login-form">
-                    <input class="login__controls login-input__item" type="email" name="email" id="email" placeholder="Enter a email">
-                    <input class="login__controls login-input__item" type="password" name="password" id="password" placeholder="Enter a password">
-                    <input class="login__controls" type="submit" id="submit" value="Sign up">
-                    <span class="register__item"><a href="${pageContext.request.contextPath}/register">Create account</a></span>
-                </form>
+    <div class="container">
+        <div class="header-container">
+            <div class="logo-container">
+                <span id="logo__item"><a href="${pageContext.request.contextPath}/">TrackMate</a></span>
             </div>
-
         </div>
+        <div class="main-container">
+            <div class="login-container">
+                <div class="login-form-container">
+                    <form method="post" class="login-form">
+                        <input class="login__controls login-input__item" type="email" name="email" id="email" placeholder="Enter a email">
+                        <input class="login__controls login-input__item" type="password" name="password" id="password" placeholder="Enter a password">
+                        <span class =login-error__item>${error}</span>
+                        <input class="login__controls" type="submit" id="submit" value="Sign in">
+                        <span class="register__item">Not have account ?<a href="${pageContext.request.contextPath}/register">Create account</a></span>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <div class="footer-container"></div>
     </div>
 </body>
 </html>
