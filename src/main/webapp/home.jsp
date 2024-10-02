@@ -104,6 +104,9 @@ To change this template use File | Settings | File Templates.
           </div>
         </div>
       </c:forEach>
+      <div class="watchlist-pagination-container">
+
+      </div>
     </div>
   </div>
   <div class="footer-container"></div>
